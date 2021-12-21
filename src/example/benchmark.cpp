@@ -1,4 +1,3 @@
-
 #include <cstdint>
 #include <string>
 #include <functional>
@@ -6,8 +5,8 @@
 #include "TPCH.h"
 
 using namespace std;
-function<run_query> query_funcs[QTOTAL] = {run_Q3, run_Q10, run_Q18, run_Q8, run_Q9};
-uint32_t QueryID[DTOTAL] = {3, 10, 18, 8, 9};
+function<run_query> query_funcs[QTOTAL] = {run_Q3, run_Q10, run_Q18, run_Q8, run_Q9, run_Qzxy};
+uint32_t QueryID[QTOTAL] = {3, 10, 18, 8, 9, 6};
 
 struct Stat
 {
@@ -53,7 +52,7 @@ void read_options(int32_t *argcp, char ***argvp, e_role *role, string *address, 
     }
     *role = (e_role)int_role;
 
-    if (*qid != 3 && *qid != 10 && *qid != 18 && *qid != 8 && *qid != 9 && *qid != 0)
+    if (*qid != 3 && *qid != 10 && *qid != 18 && *qid != 8 && *qid != 9 && *qid != 6 && *qid != 0)
     {
         cerr << "Query id error!" << endl;
         print_usage(*argvp[0], options, sizeof(options) / sizeof(parsing_ctx));

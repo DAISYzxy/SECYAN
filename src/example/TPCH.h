@@ -25,6 +25,7 @@ enum QueryName
     Q18,
     Q8,
     Q9,
+    Qzxy,
     QTOTAL
 };
 
@@ -39,4 +40,4 @@ enum DataSize
 };
 
 using run_query = void(DataSize, bool);
-run_query run_Q3, run_Q10, run_Q18, run_Q8, run_Q9;
+run_query run_Q3, run_Q10, run_Q18, run_Q8, run_Q9, run_Qzxy;

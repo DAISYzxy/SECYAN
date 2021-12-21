@@ -4,7 +4,7 @@
 #include "TPCH.h"
 
 using namespace std;
-function<run_query> query_funcs[QTOTAL] = {run_Q3, run_Q10, run_Q18, run_Q8, run_Q9};
+function<run_query> query_funcs[QTOTAL] = {run_Q3, run_Q10, run_Q18, run_Q8, run_Q9, run_Qzxy};
 
 int main(int argc, char **)
 {
@@ -28,9 +28,9 @@ int main(int argc, char **)
 
     QueryName qn;
     DataSize ds;
-    cout << "Which query to run? [0. Q3, 1. Q10, 2. Q18, 3. Q8, 4. Q9]: ";
+    cout << "Which query to run? [0. Q3, 1. Q10, 2. Q18, 3. Q8, 4. Q9, 5. Q6]: ";
     cin >> iqn;
-    if (iqn < 0 || iqn >= 5)
+    if (iqn < 0 || iqn >= 6)
     {
         cerr << "Query selection error!" << endl;
         exit(1);

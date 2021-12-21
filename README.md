@@ -3,6 +3,29 @@
 
 Yilei Wang and Ke Yi. [Secure Yannakakis: Join-Aggregate Queries over Private Data](https://www.cse.ust.hk/~yike/SecureYannakakis.pdf) ACM SIGMOD International Conference on Management of Data (SIGMOD), June 2021.
 
+This repo is a one query extension based on Secure Yannakakis.
+
+
+# New Query Implementation
+This repo add a new query implementation.
+
+```sql
+select c_name, c_custkey, o_orderkey, l_returnflag, sum(ps_supplycost*l_quantity) 
+from PART,SUPPLIER,LINEITEM,PARTSUPP,ORDERS,CUSTOMER 
+where s_suppkey = l_suppkey and ps_suppkey = l_suppkey 
+    and c_custkey=o_custkey and ps_partkey = l_partkey 
+    and p_partkey = l_partkey and o_orderkey = l_orderkey
+    and p_name like '%green%' and s_nationkey = 8 
+group by c_name, c_custkey, o_orderkey, l_returnflag
+```
+
+![FreeConnexTree](Free_connex.jpg)
+Above shows the free-connex join tree of this query.
+
+
+Have tested on 1MB, 3MB, 33MB data. Results please refer to the RESULT.pdf.
+
+
 # What is “Secure Yannakakis”?
 "Secure" refers to the [secure multi-party computation model (MPC)](https://en.wikipedia.org/wiki/Secure_multi-party_computation). 
 
@@ -28,6 +51,8 @@ Just one reason: it is much faster than the best previous work, [SMCQL](https://
 
 # How to use SECYAN?
 See [INSTALL.md](INSTALL.md) for configuration.
+
+
 
 # Acknowledgment
 Thank [@SixSiebenUno](https://github.com/SixSiebenUno) for helping writing the code.

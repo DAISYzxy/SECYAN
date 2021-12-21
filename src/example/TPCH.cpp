@@ -17,20 +17,20 @@ size_t NumRows[RTOTAL][DTOTAL] = {
 	{800, 2400, 8000, 26400, 80000}};
 
 std::vector<std::string> AttrNames[RTOTAL][QTOTAL] = {
-	{{"c_custkey"}, {"c_custkey", "c_name", "c_nationkey"}, {"c_custkey", "c_name"}, {"c_custkey"}, {}},
-	{{"o_custkey", "o_orderkey", "o_orderdate", "o_shippriority"}, {"o_custkey", "o_orderkey"}, {"o_custkey", "o_orderkey", "o_orderdate", "o_totalprice"}, {"o_orderkey", "o_custkey", "o_year"}, {"o_orderkey", "o_year"}},
-	{{"l_orderkey"}, {"l_orderkey"}, {"l_orderkey"}, {"l_orderkey", "l_suppkey", "l_partkey"}, {"l_orderkey", "l_suppkey", "l_partkey"}},
-	{{}, {}, {}, {"p_partkey"}, {"p_partkey"}},
-	{{}, {}, {}, {"s_suppkey"}, {"s_suppkey"}},
-	{{}, {}, {}, {}, {"ps_partkey", "ps_suppkey"}}};
+	{{"c_custkey"}, {"c_custkey", "c_name", "c_nationkey"}, {"c_custkey", "c_name"}, {"c_custkey"}, {}, {"c_custkey", "c_name"}},
+	{{"o_custkey", "o_orderkey", "o_orderdate", "o_shippriority"}, {"o_custkey", "o_orderkey"}, {"o_custkey", "o_orderkey", "o_orderdate", "o_totalprice"}, {"o_orderkey", "o_custkey", "o_year"}, {"o_orderkey", "o_year"}, {"o_custkey", "o_orderkey"}},
+	{{"l_orderkey"}, {"l_orderkey"}, {"l_orderkey"}, {"l_orderkey", "l_suppkey", "l_partkey"}, {"l_orderkey", "l_suppkey", "l_partkey"}, {"l_orderkey", "l_suppkey", "l_partkey", "l_returnflag"}},
+	{{}, {}, {}, {"p_partkey"}, {"p_partkey"}, {"p_partkey"}},
+	{{}, {}, {}, {"s_suppkey"}, {"s_suppkey"}, {"s_suppkey"}},
+	{{}, {}, {}, {}, {"ps_partkey", "ps_suppkey"}, {"ps_partkey", "ps_suppkey"}}};
 
 std::vector<Relation::DataType> AttrTypes[RTOTAL][QTOTAL] = {
-	{{Relation::INT}, {Relation::INT, Relation::STRING, Relation::INT}, {Relation::INT, Relation::STRING}, {Relation::INT}, {}},
-	{{Relation::INT, Relation::INT, Relation::DATE, Relation::STRING}, {Relation::INT, Relation::INT}, {Relation::INT, Relation::INT, Relation::DATE, Relation::DECIMAL}, {Relation::INT, Relation::INT, Relation::INT}, {Relation::INT, Relation::INT}},
-	{{Relation::INT}, {Relation::INT}, {Relation::INT}, {Relation::INT, Relation::INT, Relation::INT}, {Relation::INT, Relation::INT, Relation::INT}},
-	{{}, {}, {}, {Relation::INT}, {Relation::INT}},
-	{{}, {}, {}, {Relation::INT}, {Relation::INT}},
-	{{}, {}, {}, {}, {Relation::INT, Relation::INT}}};
+	{{Relation::INT}, {Relation::INT, Relation::STRING, Relation::INT}, {Relation::INT, Relation::STRING}, {Relation::INT}, {}, {Relation::INT, Relation::STRING}},
+	{{Relation::INT, Relation::INT, Relation::DATE, Relation::STRING}, {Relation::INT, Relation::INT}, {Relation::INT, Relation::INT, Relation::DATE, Relation::DECIMAL}, {Relation::INT, Relation::INT, Relation::INT}, {Relation::INT, Relation::INT}, {Relation::INT, Relation::INT}},
+	{{Relation::INT}, {Relation::INT}, {Relation::INT}, {Relation::INT, Relation::INT, Relation::INT}, {Relation::INT, Relation::INT, Relation::INT}, {Relation::INT, Relation::INT, Relation::INT, Relation::STRING}},
+	{{}, {}, {}, {Relation::INT}, {Relation::INT}, {Relation::INT}},
+	{{}, {}, {}, {Relation::INT}, {Relation::INT}, {Relation::INT}},
+	{{}, {}, {}, {}, {Relation::INT, Relation::INT}, {Relation::INT, Relation::INT}}};
 
 std::string filename[] = {
 	"customer.tbl",
@@ -347,4 +347,100 @@ void run_Q9(DataSize ds, bool printResult)
 	out.RevealAnnotToOwner();
 	if (printResult)
 		out.Print();
+}
+
+
+
+void run_Qzxy(DataSize ds, bool printResult)
+{
+	auto orders_ri = GetRI(ORDERS, Qzxy, ds, CLIENT);
+	Relation::AnnotInfo orders_ai = {true, true};
+	Relation orders(orders_ri, orders_ai);
+	auto filePath = GetFilePath(ORDERS, ds);
+	orders.LoadData(filePath.c_str(), "q9_annot");
+
+	auto cust_ri = GetRI(CUSTOMER, Qzxy, ds, SERVER);
+	Relation::AnnotInfo cust_ai = {true, true};
+	Relation customer(cust_ri, cust_ai);
+	filePath = GetFilePath(CUSTOMER, ds);
+	customer.LoadData(filePath.c_str(), "q18_annot");
+	//customer.PrintTableWithoutRevealing("customer");
+
+
+
+
+	auto lineitem_ri = GetRI(LINEITEM, Qzxy, ds, SERVER);
+	Relation::AnnotInfo lineitem_ai = {false, true};
+	Relation lineitem(lineitem_ri, lineitem_ai);
+	filePath = GetFilePath(LINEITEM, ds);
+	lineitem.LoadData(filePath.c_str(), "q9_annot2");
+
+
+	auto part_ri = GetRI(PART, Qzxy, ds, CLIENT);
+	Relation::AnnotInfo part_ai = {true, true};
+	Relation part(part_ri, part_ai);
+	filePath = GetFilePath(PART, ds);
+	part.LoadData(filePath.c_str(), "q9_annot");
+
+	auto supp_ri = GetRI(SUPPLIER, Qzxy, ds, CLIENT);
+	Relation::AnnotInfo supp_ai = {true, true};
+	Relation supplier(supp_ri, supp_ai);
+	filePath = GetFilePath(SUPPLIER, ds);
+	supplier.LoadData(filePath.c_str(), "q8_annot1");
+	
+
+	auto partsupp_ri = GetRI(PARTSUPP, Qzxy, ds, CLIENT);
+	Relation::AnnotInfo partsupp_ai = {false, true};
+	Relation partsupp(partsupp_ri, partsupp_ai);
+	filePath = GetFilePath(PARTSUPP, ds);
+	partsupp.LoadData(filePath.c_str(), "q9_annot2");
+	partsupp.Aggregate();
+
+	//lineitem.PrintTableWithoutRevealing("lineitem Init");
+	vector<string> ps_joinAttrs = {"ps_partkey", "ps_suppkey"};
+	vector<string> line_joinAttrs = {"l_partkey", "l_suppkey"};
+	lineitem.SemiJoin(partsupp, line_joinAttrs, ps_joinAttrs);
+	lineitem.SemiJoin(part, "l_partkey", "p_partkey");
+	lineitem.SemiJoin(supplier, "l_suppkey", "s_suppkey");
+	//lineitem.PrintTableWithoutRevealing("lineitem_semijoin");
+
+	auto lineitem_copy = lineitem;
+
+	lineitem_copy.Aggregate("l_orderkey");
+	//lineitem.Aggregate("l_orderkey");
+
+	orders.SemiJoin(lineitem_copy, "o_orderkey", "l_orderkey");
+	orders.Aggregate();
+	//orders.PrintTableWithoutRevealing("orders_1");
+
+	orders.SemiJoin(customer, "o_custkey", "c_custkey");
+	//orders.PrintTableWithoutRevealing("orders_semicust");
+
+	orders.RevealTuples();
+	//orders.PrintTableWithoutRevealing("orders_2");
+	vector<string> c_groupBy = {"c_custkey", "c_name"};
+	customer.Project(c_groupBy);
+	customer.AnnotOrAgg();
+	customer.RemoveZeroAnnotatedTuples();
+	customer.RevealTuples();
+	orders.Join(customer, "o_custkey", "c_custkey");
+	//orders.PrintTableWithoutRevealing("orders_3");
+
+
+	//lineitem.Project("l_orderkey");
+	//lineitem.AnnotOrAgg();
+	vector<string> l_groupBy = {"l_orderkey", "l_returnflag"};
+	lineitem.Project(l_groupBy);
+	lineitem.AnnotOrAgg();
+	lineitem.RemoveZeroAnnotatedTuples();
+	lineitem.RevealTuples();
+	//lineitem.PrintTableWithoutRevealing("lineitem_group");
+	orders.Join(lineitem, "o_orderkey", "l_orderkey");
+	//orders.PrintTableWithoutRevealing("orders_4");
+
+
+	orders.RevealAnnotToOwner();
+	if (printResult)
+		orders.Sort();
+		orders.Print(500);
 }
