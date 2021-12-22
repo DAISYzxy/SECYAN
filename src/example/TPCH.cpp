@@ -430,7 +430,6 @@ void run_Qzxy(DataSize ds, bool printResult)
 
 	orders.RevealTuples();
 	//orders.PrintTableWithoutRevealing("orders_2");
-	customer.AnnotOrAgg();
 	customer.RemoveZeroAnnotatedTuples();
 	customer.RevealTuples();
 	orders.Join(customer, "o_custkey", "c_custkey");
