@@ -404,10 +404,10 @@ void run_Qzxy(DataSize ds, bool printResult)
 	lineitem.SemiJoin(supplier, "l_suppkey", "s_suppkey");
 	//lineitem.PrintTableWithoutRevealing("lineitem_semijoin");
 
+
 	auto lineitem_copy = lineitem;
 
 	lineitem_copy.Aggregate("l_orderkey");
-	//lineitem.Aggregate("l_orderkey");
 
 	orders.SemiJoin(lineitem_copy, "o_orderkey", "l_orderkey");
 	orders.Aggregate();
@@ -416,10 +416,20 @@ void run_Qzxy(DataSize ds, bool printResult)
 	orders.SemiJoin(customer, "o_custkey", "c_custkey");
 	//orders.PrintTableWithoutRevealing("orders_semicust");
 
+	Relation orders_custkey_bool_annot = orders;
+	orders_custkey_bool_annot.Project("o_custkey");
+	orders_custkey_bool_annot.AnnotOrAgg();
+
+
+	Relation orders_orderkey_bool_annot = orders;
+	orders_orderkey_bool_annot.Project("o_orderkey");
+	orders_orderkey_bool_annot.AnnotOrAgg();
+
+	customer.SemiJoin(orders_custkey_bool_annot, "c_custkey", "o_custkey");
+	lineitem.SemiJoin(orders_orderkey_bool_annot, "l_orderkey", "o_orderkey");
+
 	orders.RevealTuples();
 	//orders.PrintTableWithoutRevealing("orders_2");
-	vector<string> c_groupBy = {"c_custkey", "c_name"};
-	customer.Project(c_groupBy);
 	customer.AnnotOrAgg();
 	customer.RemoveZeroAnnotatedTuples();
 	customer.RevealTuples();
